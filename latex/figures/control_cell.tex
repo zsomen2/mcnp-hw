@@ -1,0 +1,52 @@
+% =====================================================================
+%  control_cell.tex  --  top view of the two control-cell types, coloured as in
+%  the MCNP render (yellow water, green aluminium, red graphite).  Left: a fully
+%  graphite-filled control cell (no hole).  Right: a holed control cell, where a
+%  central water hole (bore d = 2.9) is lined by an aluminium wall (w = 1.5 mm),
+%  giving an outer diameter of 3.2; only this hole is dimensioned (all cm).  Both
+%  diameters are placed on the right of the holed cell (outer high, inner low) so
+%  they clear the filled cell on the left.  The cells use the same coordinate unit
+%  (0.524 cm) as fuel_cell_types.tex, so the squares are the same size.
+%  \input from chapters/2-geometry.tex.
+% =====================================================================
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[
+      x=0.524cm,y=0.524cm,
+      font=\small,
+      lead/.style={-{Stealth[length=1.4mm]}, thin},
+    ]
+    % phantom points: balance the bounding box about the pair midpoint (x=4.4) so
+    % the two cells stay centred despite the holed cell's right-side dimensions.
+    \path (-5.5,0) (14.3,0);
+    % ===== left: fully filled graphite control cell (no hole) =====
+    \begin{scope}[shift={(0,0)}]
+      \fill[yellow]         (-3.6,-3.6)   rectangle (3.6,3.6);    % water (cell)
+      \fill[green!75!black] (-3.4,-3.4)   rectangle (3.4,3.4);    % Al box wall
+      \fill[red]            (-3.25,-3.25) rectangle (3.25,3.25);  % graphite (cavity)
+      \draw[thick] (-3.6,-3.6)   rectangle (3.6,3.6);     % cell pitch
+      \draw        (-3.4,-3.4)   rectangle (3.4,3.4);     % Al box outer wall
+      \draw        (-3.25,-3.25) rectangle (3.25,3.25);   % Al box cavity
+    \end{scope}
+    % ===== right: holed control cell (dimensioned) =====
+    \begin{scope}[shift={(8.8,0)}]
+      \fill[yellow]         (-3.6,-3.6)   rectangle (3.6,3.6);    % water (cell)
+      \fill[green!75!black] (-3.4,-3.4)   rectangle (3.4,3.4);    % Al box wall
+      \fill[red]            (-3.25,-3.25) rectangle (3.25,3.25);  % graphite (cavity)
+      \fill[green!75!black] (0,0) circle (1.6);                   % Al wall (D = 3.2)
+      \fill[yellow]         (0,0) circle (1.45);                  % water hole (D = 2.9)
+      \draw[thick] (-3.6,-3.6)   rectangle (3.6,3.6);     % cell pitch
+      \draw        (-3.4,-3.4)   rectangle (3.4,3.4);     % Al box outer wall
+      \draw        (-3.25,-3.25) rectangle (3.25,3.25);   % Al box cavity
+      \draw        (0,0) circle (1.6);
+      \draw        (0,0) circle (1.45);
+      % ---- diameter dimensions on the right: outer (D 3.2) high, inner (D 2.9) low ----
+      \draw[lead] (3.9,1.8)  -- (1.453,0.671);            % D = 3.2 (Al wall, outer)
+      \node[anchor=west,fill=white,inner sep=1.5pt] at (3.95,1.8) {\O 3.2};
+      \draw[lead] (3.9,-1.8) -- (1.317,-0.608);           % D = 2.9 (water bore, inner)
+      \node[anchor=west,fill=white,inner sep=1.5pt] at (3.95,-1.8) {\O 2.9};
+    \end{scope}
+  \end{tikzpicture}
+  \caption{Top view of the two control-cell types.}
+  \label{fig:controlcell}
+\end{figure}

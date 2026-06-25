@@ -1,0 +1,89 @@
+% =====================================================================
+%  importance_layers.tex  --  top view of the concentric cylindrical importance
+%  layers around the core (MCNP cells 200-208, surfaces 61-68).  TWO diagrams:
+%  (top)    coloured by material -- water (yellow, r 0-70), concrete (magenta,
+%           70-120) -- only the water/concrete mantles (r=70, r=120) are labelled;
+%  (bottom) the SAME geometry coloured by a heat map of the neutron importance
+%           (imp:n = 1 in the core, then 2,4,...,256 outward).  The importance
+%           values (\texttt) are called out on the RIGHT with arrows pointing to
+%           the middle of each layer; the diameters are repeated on the LEFT.
+%  Core = red / imp=1 rectangle (true 8:9 ratio).  scale=0.02778 -> each diagram
+%  is 7 cm tall; phantom points keep the circles centred (NOT \resizebox).
+%  \input from chapters/2-geometry.tex.
+% =====================================================================
+\definecolor{imp1}{HTML}{1F2AFF}
+\definecolor{imp2}{HTML}{2A8CFF}
+\definecolor{imp4}{HTML}{24D6D6}
+\definecolor{imp8}{HTML}{2BD98A}
+\definecolor{imp16}{HTML}{6DDB2B}
+\definecolor{imp32}{HTML}{C3DB2B}
+\definecolor{imp64}{HTML}{FFD42B}
+\definecolor{imp128}{HTML}{FF8C2B}
+\definecolor{imp256}{HTML}{FF2A2A}
+\begin{figure}[H]
+  \centering
+  % ===== TOP: coloured by material =====
+  \begin{tikzpicture}[
+      scale=0.02778,   % 252 units (centreline span, +-126) x 0.02778 = 7 cm tall
+      font=\small,
+      lead/.style={-{Stealth[length=1.6mm]}, thin},
+      cl/.style  ={thin, dash pattern=on 7pt off 2pt on 1pt off 2pt},
+    ]
+    \fill[magenta] (0,0) circle (120);
+    \fill[yellow]  (0,0) circle (70);
+    \fill[red]   (-28.8,-32.4) rectangle (28.8,32.4);
+    \draw[thick] (-28.8,-32.4) rectangle (28.8,32.4);
+    % only the water/concrete mantles (importance-layer circles removed)
+    \draw[thin] (0,0) circle (70);
+    \draw[thin] (0,0) circle (120);
+    \draw[cl] (-126,0) -- (126,0);
+    \draw[cl] (0,-126) -- (0,126);
+    % mantle + core labels with radial leaders (as in the lower diagram)
+    \node[anchor=east, align=center, fill=white, inner sep=2pt] (om) at (-152,-60)
+      {concrete\\outer\\mantle};
+    \draw[lead] (om.east) -- (-111.6,-44.1);          % radial to r=120
+    \node[anchor=west, align=center, fill=white, inner sep=2pt] (im) at (152,60)
+      {concrete\\inner\\mantle};
+    \draw[lead] (im.west) -- (65.1,25.7);             % radial to r=70
+    \node[anchor=west, align=center, fill=white, inner sep=2pt] (rc) at (152,-60)
+      {reactor\\core};
+    \draw[lead] (rc.west) -- (18.6,-7.3);             % radial into the core
+    \path (-212,0) (212,0);
+  \end{tikzpicture}\\[5mm]
+  % ===== BOTTOM: coloured by a heat map of the neutron importance =====
+  \begin{tikzpicture}[
+      scale=0.02778,
+      font=\small,
+      lead/.style={-{Stealth[length=1.6mm]}, thin},
+      cl/.style  ={thin, dash pattern=on 7pt off 2pt on 1pt off 2pt},
+    ]
+    % importance heat map (outer shell = highest importance)
+    \foreach \r/\c in {120/imp256,110/imp128,100/imp64,90/imp32,80/imp16,70/imp8,60/imp4,50/imp2}
+      \fill[\c] (0,0) circle (\r);
+    \fill[imp1]  (-28.8,-32.4) rectangle (28.8,32.4);
+    \draw[thick] (-28.8,-32.4) rectangle (28.8,32.4);
+    \foreach \r in {50,60,70,80,90,100,110,120}
+      \draw[thin] (0,0) circle (\r);
+    \draw[cl] (-126,0) -- (126,0);
+    \draw[cl] (0,-126) -- (0,126);
+    % left: diameter callouts to the circles (as in the top diagram)
+    \foreach \d/\tx/\ty/\ly in {%
+        240/-98.3/68.8/105, 220/-98.4/49.2/75, 200/-95.8/28.7/45, 180/-89.6/9.0/15,%
+        160/-79.6/-8.0/-15, 140/-67.0/-20.1/-45, 120/-53.7/-26.8/-75, 100/-41.0/-28.7/-105}{
+      \draw[lead] (-150,\ly) -- (\tx,\ty);
+      \node[anchor=east,fill=white,inner sep=1pt] at (-150,\ly) {\O \d};
+    }
+    % right: importance callouts (monospace), arrows to the middle of each layer
+    \foreach \v/\tx/\ty/\ly in {%
+        256/92.1/68.8/112, 128/91.6/51.3/84, 64/89.0/33.2/56, 32/83.6/15.6/28,%
+        16/75.0/0/0, 8/63.9/-11.9/-28, 4/51.5/-19.2/-56, 2/36.7/-20.5/-84,%
+        1/14.4/-10.8/-112}{
+      \draw[lead] (150,\ly) -- (\tx,\ty);
+      \node[anchor=west,fill=white,inner sep=1pt] at (150,\ly) {\texttt{imp:n=\v}};
+    }
+    \path (-222,0) (222,0);
+  \end{tikzpicture}
+  \caption{Importance layers around the core, coloured by material
+    (top) and by neutron importance (bottom). The diameters are in cm.}
+  \label{fig:implayers}
+\end{figure}

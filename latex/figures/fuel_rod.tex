@@ -1,0 +1,61 @@
+% =====================================================================
+%  fuel_rod.tex  --  blueprint of the fuel rod.  Front view (left) shows the
+%  two lengths (cladding 590, fuel meat 500); left view (right) shows the two
+%  concentric diameters (cladding 10, fuel meat 7).  Dash-dot symmetry centre-
+%  lines.  Lengths foreshortened (not to scale); dimensions in mm.
+%  \input from chapters/2-geometry.tex.
+% =====================================================================
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[
+      font=\small,
+      dim/.style ={{Stealth[length=1.6mm]}-{Stealth[length=1.6mm]}, thin},
+      ext/.style ={thin},
+      lead/.style={-{Stealth[length=1.4mm]}, thin},
+      cl/.style  ={thin, dash pattern=on 7pt off 2pt on 1pt off 2pt},
+      almat/.style  ={pattern={Lines[angle=60,distance=3pt,line width=0.4pt]},
+                      pattern color=green!75!black},
+      fuelmat/.style={pattern=crosshatch, pattern color=blue},
+    ]
+    % ---- material hatching: Al cladding (green 60-deg lines), UO2 fuel meat
+    %      (blue cross-hatch).  Lay down green, erase the fuel area with white,
+    %      then cross-hatch it, so the two patterns never overlap. ------------
+    % front view (left), as a longitudinal section
+    \fill[almat]   (0,-0.7) rectangle (8,0.7);
+    \fill[white]   (0.61,-0.49) rectangle (7.39,0.49);
+    \fill[fuelmat] (0.61,-0.49) rectangle (7.39,0.49);
+    % left view (right), cross-section
+    \fill[almat]   (10.5,0) circle (0.70);
+    \fill[white]   (10.5,0) circle (0.49);
+    \fill[fuelmat] (10.5,0) circle (0.49);
+
+    % ---- outlines ---------------------------------------------------------
+    \draw[thick] (0,-0.7) rectangle (8,0.7);            % Al cladding, L = 590
+    \draw[thick] (0.61,-0.49) rectangle (7.39,0.49);    % UO2 fuel meat, l = 500
+    \draw[thick] (10.5,0) circle (0.70);                % Al cladding, D = 10
+    \draw[thick] (10.5,0) circle (0.49);                % UO2 fuel meat, D = 7
+
+    % ---- symmetry centrelines (dash-dot) ----------------------------------
+    \draw[cl] (-0.6,0) -- (11.9,0);                     % common horizontal axis
+    \draw[cl] (4,-0.95) -- (4,0.95);                    % front view, mid-length
+    \draw[cl] (10.5,-0.95) -- (10.5,0.95);              % left view, vertical
+
+    % ---- length dimensions (front view) -----------------------------------
+    \draw[ext] (0.61,-0.59) -- (0.61,-1.58);            % l = 500 (inner fuel)
+    \draw[ext] (7.39,-0.59) -- (7.39,-1.58);
+    \draw[dim] (0.61,-1.45) -- (7.39,-1.45);
+    \node[fill=white,inner sep=1.5pt] at (4,-1.45) {500};
+    \draw[ext] (0,-0.8) -- (0,-2.03);                   % L = 590 (cladding)
+    \draw[ext] (8,-0.8) -- (8,-2.03);
+    \draw[dim] (0,-1.9) -- (8,-1.9);
+    \node[fill=white,inner sep=1.5pt] at (4,-1.9) {590};
+
+    % ---- diameter dimensions (left view) ----------------------------------
+    \draw[lead] (11.9,0.95) -- (11.6,0.95) -- (10.90,0.573);   % D = 10 (outer)
+    \node[anchor=west] at (11.95,0.95) {\O 10};
+    \draw[lead] (9.3,-0.85) -- (9.6,-0.85) -- (10.22,-0.40);   % D = 7 (inner)
+    \node[anchor=east] at (9.25,-0.85) {\O 7};
+  \end{tikzpicture}
+  \caption{Dimensions of a fuel rod in mm.}
+  \label{fig:fuelrod}
+\end{figure}

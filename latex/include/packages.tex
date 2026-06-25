@@ -1,0 +1,202 @@
+% =====================================================================
+%  packages.tex  --  preamble: packages, fonts, sizes, page layout
+%  Engine: LuaLaTeX (required for fontspec + Times New Roman + microtype
+%  letterspacing).  See CLAUDE.md for the full style specification.
+% =====================================================================
+
+% ---------------------------------------------------------------------
+%  Math (load amsmath BEFORE unicode-math) and fonts
+% ---------------------------------------------------------------------
+\usepackage{amsmath}
+
+\usepackage{unicode-math}          % loads fontspec; OpenType math support
+\setmainfont{Times New Roman}      % body font = real Times New Roman
+\setmathfont{TeX Gyre Termes Math} % Times-clone math font (closest match)
+
+\usepackage{microtype}             % micro-typography + \textls letterspacing
+
+% ---------------------------------------------------------------------
+%  Exact font sizes  (base class is 11pt; redefine the size macros so
+%  they hit the values requested verbatim)
+%     \normalsize = 11pt   \large = 12pt   \Large = 14pt   \LARGE = 16pt
+% ---------------------------------------------------------------------
+\makeatletter
+\renewcommand\normalsize{%
+  \@setfontsize\normalsize{11}{13.6}%
+  \abovedisplayskip 11\p@ \@plus3\p@ \@minus6\p@
+  \abovedisplayshortskip \z@ \@plus3\p@
+  \belowdisplayshortskip 6.5\p@ \@plus3.5\p@ \@minus3\p@
+  \belowdisplayskip \abovedisplayskip}
+\renewcommand\large{\@setfontsize\large{12}{14.5}}
+\renewcommand\Large{\@setfontsize\Large{14}{17}}
+\renewcommand\LARGE{\@setfontsize\LARGE{16}{19}}
+\makeatother
+\normalsize                        % apply the new \normalsize now
+
+% ---------------------------------------------------------------------
+%  Page geometry  --  2.5 cm margins all round.
+%  No includehead/includefoot: the ruled header & footer sit in the top and
+%  bottom margins (Word-style), so the 2.5 cm text block keeps its full size
+%  (the head/sep/foot are not subtracted from the body).
+% ---------------------------------------------------------------------
+\usepackage[a4paper,margin=2.5cm,
+            headheight=15pt,headsep=9pt,footskip=35pt]{geometry}
+%% headsep/footskip tuned so the header rule sits ~21.8 mm from the top and the
+%% footer rule ~17.8 mm from the bottom, matching HW_documentation_word.pdf
+%% (the 2.5 cm body margins are unchanged, so the text block keeps its size).
+
+% ---------------------------------------------------------------------
+%  Paragraph layout  --  block style, 8pt between paragraphs (and titles)
+% ---------------------------------------------------------------------
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{8pt plus 2pt minus 1pt}
+
+% ---------------------------------------------------------------------
+%  Heading styles (titlesec).  Word-style multilevel list: the NUMBER sits at
+%  the left margin and only the TITLE is indented past it (the number is boxed
+%  to the indent width).  Unnumbered headings (Appendix, References, Contents)
+%  have no number, so their title sits at the left margin -> no indentation.
+%     "chapter"    -> \section      "1.  Title"     14pt bold, title @ 0.75cm
+%     "section"    -> \subsection   "2.1 Title"     12pt bold, title @ 0.75cm
+%     "subsection" -> \subsubsection "2.1.1 Title"  12pt      , title @ 1.25cm
+%  Top level shows a trailing period (1.) like the Word doc.
+% ---------------------------------------------------------------------
+\usepackage{titlesec}
+
+\titleformat{\section}[hang]
+  {\normalfont\Large\bfseries}{\makebox[0.75cm][l]{\thesection.}}{0pt}{}
+\titlespacing*{\section}{0pt}{8pt}{8pt}
+
+\titleformat{\subsection}[hang]
+  {\normalfont\large\bfseries}{\makebox[0.75cm][l]{\thesubsection}}{0pt}{}
+\titlespacing*{\subsection}{0pt}{8pt}{8pt}
+
+\titleformat{\subsubsection}[hang]
+  {\normalfont\large}{\makebox[1.25cm][l]{\thesubsubsection}}{0pt}{}
+\titlespacing*{\subsubsection}{0pt}{8pt}{8pt}
+
+% Number down to subsubsection and list them in the ToC
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+% In the ToC, give the top-level (section) number a trailing period -> "1."
+% (matching the body headings, where titlesec prints "\thesection.").  Deeper
+% levels (2.1, 2.1.1) keep the bare number, and the unnumbered Appendix entry
+% has no \numberline so it is unaffected.  This is a copy of article's
+% \l@section with a period injected into the number box.
+\makeatletter
+\renewcommand*\l@section[2]{%
+  \ifnum \c@tocdepth >\z@
+    \addpenalty\@secpenalty
+    \addvspace{1.0em \@plus\p@}%
+    \setlength\@tempdima{1.5em}%
+    \begingroup
+      \parindent \z@ \rightskip \@pnumwidth
+      \parfillskip -\@pnumwidth
+      \leavevmode \bfseries
+      \advance\leftskip\@tempdima
+      \hskip -\leftskip
+      \def\numberline##1{\hb@xt@\@tempdima{##1.\hfil}}%
+      #1\nobreak\hfil \nobreak\hb@xt@\@pnumwidth{\hss #2}\par
+    \endgroup
+  \fi}
+\makeatother
+
+% ---------------------------------------------------------------------
+%  Submission date  ->  "YYYY. MM. DD." (auto from compile date).
+%  Not used by default; available as \docdate (e.g. on the title page).
+% ---------------------------------------------------------------------
+\newcommand{\twodig}[1]{\ifnum#1<10 0\fi\number#1}
+\newcommand{\docdate}{\number\year.\ \twodig{\month}.\ \twodig{\day}.}
+
+% ---------------------------------------------------------------------
+%  Ruled header & footer (fancyhdr).  Footer text is \normalsize (11pt).
+%     header : top rule only (no text), ~2 blank lines down to the body
+%     footer : page number (right) above a rule
+%     page numbering starts on the title page (counted as 1) but is only
+%     shown from page 2 onward -> the title page uses an empty-text style
+% ---------------------------------------------------------------------
+\usepackage{fancyhdr}
+
+\fancypagestyle{main}{%
+  \fancyhf{}%
+  \renewcommand{\headrulewidth}{0.4pt}%
+  \renewcommand{\footrulewidth}{0.4pt}%
+  \fancyfoot[R]{\normalsize\thepage}%
+}
+
+\fancypagestyle{titlepg}{%
+  \fancyhf{}%
+  \renewcommand{\headrulewidth}{0.4pt}%
+  \renewcommand{\footrulewidth}{0.4pt}%
+  % invisible page-number-height strut so the footer rule sits at the same
+  % height as on numbered pages (where the page number gives the foot its height)
+  \fancyfoot[R]{\normalsize\vphantom{\thepage}}%
+}
+
+\pagestyle{main}
+
+% ---------------------------------------------------------------------
+%  Figures, tables, captions, code listings
+% ---------------------------------------------------------------------
+\usepackage{graphicx}
+\usepackage{xcolor}                 % colours for the listing frame/background
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{multirow}              % material name/density spanning component rows
+\usepackage{tabularx}              % equal-width columns (ICRP table at fixed width)
+% equal-width X-column variants: Y centres the content, L flushes it left
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\usepackage{caption}
+\captionsetup{font=it}             % italic captions, e.g. "Figure 1: ..."
+% table captions sit ABOVE the table (already placed before the tabular) and are
+% flush LEFT; singlelinecheck=false keeps short one-line captions left-aligned too.
+% Scoped to tables so figure captions keep their centred, below-the-figure style.
+\captionsetup[table]{position=above,justification=raggedright,singlelinecheck=false}
+
+\usepackage{pgfplots}              % TikZ-based plotting (ICRP coefficient curve)
+\pgfplotsset{compat=1.18}
+\usetikzlibrary{arrows.meta}       % arrow tips for the plot axes
+\usetikzlibrary{patterns,patterns.meta}  % material hatching (fuel-rod blueprint)
+
+\usepackage{listings}              % for the MCNP input file in the appendix
+% Consolas as the listing font; ligatures off so e.g. "->" stays literal
+\newfontfamily\lstfont{Consolas}[Ligatures={NoCommon,NoContextual}]
+% \ct{RRGGBB}{text}: a Consolas-8pt coloured token, used in the listing's
+% escape-to-LaTeX markup.  The appendix MCNP dump (inlined in
+% chapters/appendix.tex) was pre-tokenised with the VS Code MCNP grammar so the
+% colours match the editor exactly.
+\newcommand{\ct}[2]{{\lstfont\fontsize{8}{10}\selectfont\textcolor[HTML]{#1}{#2}}}
+% \cb{text}: a bold Consolas-8pt listing token (no colour) -- used for the
+% MCNP title card on the first line of the appendix listing.
+\newcommand{\cb}[1]{{\lstfont\fontsize{8}{10}\selectfont\textbf{#1}}}
+\lstset{
+  basicstyle=\lstfont\fontsize{8}{10}\selectfont,
+  numbers=left,                    % line numbering on the left
+  numberstyle=\lstfont\fontsize{8}{10}\selectfont\color[HTML]{454545},
+  numbersep=8pt,
+  stepnumber=1,
+  frame=single,                    % border around the listing
+  backgroundcolor=\color[gray]{0.95}, % light-gray background
+  escapeinside={(*@}{@*)},         % inline colour markup from the colouriser
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  % frame spans 98% of \textwidth, centred; line numbers sit flush to the left border
+  framexleftmargin=23pt,
+  xleftmargin=\dimexpr0.01\textwidth+23pt\relax,
+  xrightmargin=0.01\textwidth,
+}
+
+% ---------------------------------------------------------------------
+%  Bibliography (biblatex + biber).  refs.bib lives in bib/.
+% ---------------------------------------------------------------------
+\usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
+\addbibresource{bib/refs.bib}
+
+% ---------------------------------------------------------------------
+%  Links (load hyperref late)
+% ---------------------------------------------------------------------
+\usepackage[hidelinks]{hyperref}

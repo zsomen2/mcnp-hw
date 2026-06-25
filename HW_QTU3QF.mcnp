@@ -1,1 +1,187 @@
-HW QTU3QF: Modelling of the BME Training Reactor
+HW_QTU3QF
+c
+c CELLS
+c
+c fuel rod
+1  1 -5.3  -1 -4 5                           imp:n=1 u=1   $ meat
+2  3 -2.7  -2 -6 7 #1                        imp:n=1 u=1   $ cladding
+3  2 -1.0  #1 #2                             imp:n=1 u=1   $ water gap
+c
+c fuel cell: filled
+10 2 -1.0  -11 12 14 -13 -55 56  lat=1 fill=-1:2 -1:2 0:0
+     1 1 1 1
+     1 1 1 1
+     1 1 1 1
+     1 1 1 1                                 imp:n=1 u=2   $ fuel grid
+11 0       -21 22 -23 24 -55 56       fill=2 imp:n=1 u=3   $ cell inner box
+12 3 -2.7  -31 32 -33 34 -55 56 #11          imp:n=1 u=3   $ casing
+13 2 -1.0  #(-31 32 -33 34 -55 56)           imp:n=1 u=3   $ water gap
+c
+c fuel cell: half-filled
+20 2 -1.0  -11 12 14 -13 -55 56  lat=1 fill=-1:2 -1:2 0:0
+     1 1 1 1
+     1 1 1 1
+     4 4 4 4
+     4 4 4 4                                 imp:n=1 u=4   $ fuel grid
+21 0       -21 22 -23 24 -55 56       fill=4 imp:n=1 u=5   $ cell inner box
+22 3 -2.7  -31 32 -33 34 -55 56 #21          imp:n=1 u=5   $ casing
+23 2 -1.0  #(-31 32 -33 34 -55 56)           imp:n=1 u=5   $ water gap
+c
+c fuel cell: middle-empty
+30 2 -1.0  -11 12 14 -13 -55 56  lat=1 fill=-1:2 -1:2 0:0
+     1 1 1 1
+     1 6 6 1
+     1 6 6 1
+     1 1 1 1                                 imp:n=1 u=6   $ fuel grid
+31 0       -21 22 -23 24 -55 56       fill=6 imp:n=1 u=7   $ cell inner box
+32 3 -2.7  -31 32 -33 34 -55 56 #31          imp:n=1 u=7   $ casing
+33 2 -1.0  #(-31 32 -33 34 -55 56)           imp:n=1 u=7   $ water gap
+c
+c fuel cell: corner-empty
+40 2 -1.0  -11 12 14 -13 -55 56  lat=1 fill=-1:2 -1:2 0:0
+     8 8 1 1
+     8 1 1 1
+     1 1 1 1
+     1 1 1 1                                 imp:n=1 u=8   $ fuel grid
+41 0       -21 22 -23 24 -55 56       fill=8 imp:n=1 u=9   $ cell inner box
+42 3 -2.7  -31 32 -33 34 -55 56 #41          imp:n=1 u=9   $ casing
+43 2 -1.0  #(-31 32 -33 34 -55 56)           imp:n=1 u=9   $ water gap
+c
+c control cell: full
+50 4 -1.7  -21 22 -23 24 -55 56              imp:n=1 u=10  $ reflector body
+51 3 -2.7  -31 32 -33 34 -55 56 #50          imp:n=1 u=10  $ casing
+52 2 -1.0  #(-31 32 -33 34 -55 56)           imp:n=1 u=10  $ water gap
+c
+c control cell: holed
+60 2 -1.0  -8 -55  56                        imp:n=1 u=11  $ central hole
+61 3 -2.7  -9   8 -55 56                     imp:n=1 u=11  $ hole casing
+62 4 -1.7  -21 22 -23 24 -55 56 #60 #61      imp:n=1 u=11  $ reflector body
+63 3 -2.7  -31 32 -33 34 -55 56 #60 #61 #62  imp:n=1 u=11  $ casing
+64 2 -1.0  #(-31 32 -33 34 -55 56)           imp:n=1 u=11  $ water gap
+c
+c core grid
+100 2 -1.0 -41 42 44 -43 -55 56  lat=1 fill=-3:4 -4:4 0:0
+     10   10   10   10   10   10   10   10                 $ row 1
+     10   10   10   10   10   10   10   10                 $ row 2
+     10    9    3    3    3    7   11   11                 $ row 3
+     10    3    3    5    3    3   20   11                 $ row 4
+     10    3    3    3    3    3   20   11                 $ row 5
+     10    3    3    3    3    3   20   11                 $ row 6
+     10   10    3    3    3    3   10   10                 $ row 7
+     10   10   20   20   20   20   10   10                 $ row 8
+     10   10   11   11   11   11   10   10   imp:n=1 u=20  $ row 9
+c     A    B    C    D    E    F    G    H
+c
+c importance layers
+200 0       -51 52 -53 54 -55 56   fill=20 imp:n=1 trcl=1  $ center the core
+201 2 -1.0 #200 -61 -71 72                 imp:n=2         $ water r 0-50
+202 2 -1.0  -62  61 -71 72                 imp:n=4         $ water r 50-60
+203 2 -1.0  -63  62 -71 72                 imp:n=8         $ water r 60-70
+204 5 -2.4  -64  63 -71 72                 imp:n=16        $ concrete r 70-80
+205 5 -2.4  -65  64 -71 72                 imp:n=32        $ concrete r 80-90
+206 5 -2.4  -66  65 -71 72                 imp:n=64        $ concrete r 90-100
+207 5 -2.4  -67  66 -71 72                 imp:n=128       $ concrete r 100-110
+208 5 -2.4  -68  67 -71 72                 imp:n=256       $ concrete r 110-120
+209 0      #200 #201 #202 #203 #204
+           #205 #206 #207 #208             imp:n=0         $ outside
+
+c SURFACES
+c
+c fuel rod
+1   cz    0.35    $ meat radius
+2   cz    0.5     $ clad radius
+4   pz   25.0     $ meat top
+5   pz  -25.0     $ meat bottom
+6   pz   29.5     $ clad top
+7   pz  -29.5     $ clad bottom
+c reflector hole
+8   c/z  0.8125 -0.8125 1.45  $ hole
+9   c/z  0.8125 -0.8125 1.60  $ hole casing
+c fuel rod grid tile
+11  px   0.8125   $ rod tile +x
+12  px  -0.8125   $ rod tile -x
+13  py   0.8125   $ rod tile +y
+14  py  -0.8125   $ rod tile -y
+c cell inner box
+21  px   4.0625   $ inner box +x
+22  px  -2.4375   $ inner box -x
+23  py   2.4375   $ inner box +y
+24  py  -4.0625   $ inner box -y
+c casing
+31  px   4.2125   $ casing +x
+32  px  -2.5875   $ casing -x
+33  py   2.5875   $ casing +y
+34  py  -4.2125   $ casing -y
+c cell grid tile
+41  px   4.4125   $ cell grid tile +x
+42  px  -2.7875   $ cell grid tile -x
+43  py   2.7875   $ cell grid tile +y
+44  py  -4.4125   $ cell grid tile -y
+c reactor core
+51  px   33.2125  $ core +x
+52  px  -24.3875  $ core -x
+53  py   31.5875  $ core +y
+54  py  -33.2125  $ core -y
+55  pz   30.0     $ core top
+56  pz  -30.0     $ core bottom
+c importance layers
+61  cz    50.0    $ water
+62  cz    60.0
+63  cz    70.0
+64  cz    80.0    $ concrete
+65  cz    90.0
+66  cz   100.0
+67  cz   110.0
+68  cz   120.0    $ container tank mantle
+c contaier tank
+71  pz   100.0    $ container tank top
+72  pz  -100.0    $ container tank bottom
+
+c DATA
+c
+c materials
+m1   92235.50c 0.1        $ U-235
+     92238.50c 0.9        $ U-238
+      8016.50c 2          $ O -> UO2 (rho 5.3)
+m2    1001.50c 2          $ H
+      8016.50c 1          $ O -> water (rho 1.0)
+m3   13027.50c 1          $ aluminium (rho 2.7)
+m4    6012.50c 1          $ graphite (rho 1.7)
+m5    1001.50c -0.01      $ H
+      6012.50c -0.001     $ C
+      8016.50c -0.529107  $ O
+     11023.51c -0.016     $ Na
+     12000.51c -0.002     $ Mg
+     13027.50c -0.033872  $ Al
+     14000.51c -0.337021  $ Si
+     19000.51c -0.013     $ K
+     20000.51c -0.044     $ Ca
+     26000.55c -0.014     $ Fe -> concrete (rho 2.4)
+c
+c transform (to center the reactor core)
+tr1 -4.4125 0.8125 0
+c source
+mode n
+kcode 2000 1.0 20 220   $ hist/cycle, initial k_eff, inactive, total cycles
+ksrc -1.1625 0.8125 0   $ D5 cell (1;2) fuel rod lattice element center
+c
+c tally (neutron flux -> dose rate)
+f2:n 68              $ avg neutron flux on container tank mantle
+fm2 2.934e13         $ 8.15e15 n/s (100 kW) x 3.6e-3 (pSv/s -> uSv/h)
+e2 0.5e-6 0.5 20     $ energy bins: thermal / epithermal / fast [MeV]
+c
+c energy-dependent response function [pSv*cm^2]
+c (ICRP-116 : Table A.5 : AP geometry)
+de2  1.0e-9 1.0e-8 2.5e-8 1.0e-7 2.0e-7 5.0e-7 1.0e-6 2.0e-6
+     5.0e-6 1.0e-5 2.0e-5 5.0e-5 1.0e-4 2.0e-4 5.0e-4 1.0e-3
+     2.0e-3 5.0e-3 1.0e-2 2.0e-2 3.0e-2 5.0e-2 7.0e-2 1.0e-1
+     1.5e-1 2.0e-1 3.0e-1 5.0e-1 7.0e-1 9.0e-1 1.0e0  1.2e0
+     1.5e0  2.0e0  3.0e0  4.0e0  5.0e0  6.0e0  7.0e0  8.0e0
+     9.0e0  1.0e1  1.2e1  1.4e1  1.5e1  1.6e1  1.8e1  2.0e1
+c
+df2  3.09 3.55 4.00 5.20 5.87 6.59 7.03 7.39
+     7.71 7.82 7.84 7.82 7.79 7.73 7.54 7.54
+     7.61 7.97 9.11 12.2 15.7 23.0 30.6 41.9
+     60.6 78.8 114  177  232  279  301  330
+     365  407  458  483  494  498  499  499
+     500  500  499  495  493  490  484  477

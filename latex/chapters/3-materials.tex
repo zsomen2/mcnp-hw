@@ -1,0 +1,56 @@
+% =====================================================================
+%  Chapter 3 -- Materials
+% =====================================================================
+\section{Materials}
+
+The materials assigned to the cells and shells of the model are summarised in table~\ref{tab:materials}.
+
+\begin{table}[H]
+  \centering
+  \caption{Materials of the model, their densities and compositions.}
+  \label{tab:materials}
+  \begin{tabularx}{0.9\textwidth}{L Y Y L}
+    \toprule
+    Material & Density [g/cm$^3$] & Component & Weight fraction \\
+    \midrule
+    \multirow{3}{*}{UO$_2$ fuel} & \multirow{3}{*}{$5.3$}
+            & $^{235}$U & $0.1$ \\
+          & & $^{238}$U & $0.9$ \\
+          & & O         & $2$   \\
+    \midrule
+    \multirow{2}{*}{Water} & \multirow{2}{*}{$1.0$}
+            & H & $2$ \\
+          & & O & $1$ \\
+    \midrule
+    Aluminium & $2.7$ & Al & $1$ \\
+    \midrule
+    Graphite  & $1.7$ & C  & $1$ \\
+    \midrule
+    \multirow{10}{*}{Concrete} & \multirow{10}{*}{$2.4$}
+            & H  & $0.01$     \\
+          & & C  & $0.001$    \\
+          & & O  & $0.529107$ \\
+          & & Na & $0.016$    \\
+          & & Mg & $0.002$    \\
+          & & Al & $0.033872$ \\
+          & & Si & $0.337021$ \\
+          & & K  & $0.013$    \\
+          & & Ca & $0.044$    \\
+          & & Fe & $0.014$    \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+In MCNP each nuclide is identified by a ZAID of the form $ZZZAAA.nnX$, whose numerical part is built from the atomic number $Z$ and the mass number $A$ as
+
+\begin{equation}
+ZZZAAA = 1000\,Z + A.
+\end{equation}
+
+For example $92235$ stands for $Z=92$ and $A=235$, that is U-235, while $8016$ stands for oxygen-16.
+The suffix $.nnX$ names the cross-section evaluation, here the continuous-energy libraries $.50c$, $.51c$ and $.55c$.
+
+The value following each ZAID is the fraction of that nuclide in the material.
+A positive value is an atom fraction and a negative value is a weight fraction.
+
+\newpage

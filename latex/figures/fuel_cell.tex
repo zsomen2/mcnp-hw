@@ -1,0 +1,75 @@
+% =====================================================================
+%  fuel_cell.tex  --  top view of a fuel cell, coloured as in the MCNP render
+%  (yellow water, green aluminium, blue UO2).  A 4x4 fuel-rod lattice sits in an
+%  aluminium box.  Dimensions: lattice element b = 1.625 and cell pitch e = 7.2
+%  (bottom), Al box side a = 6.5 (right); all cm.  The italic indices on the top
+%  (columns, i) and left (rows, j) are the MCNP lattice coordinates
+%  (fill=-1:2 -1:2), so a rod is addressed as i:j.
+%  \input from chapters/2-geometry.tex.
+% =====================================================================
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[
+      scale=0.8,
+      font=\small,
+      dim/.style ={{Stealth[length=1.6mm]}-{Stealth[length=1.6mm]}, thin},
+      ext/.style ={thin},
+    ]
+    % phantom points: balance the bounding box about the cell centre (x=0) so the
+    % square stays centred in the figure despite the right-side dimensions
+    % (real content spans x in [-4.35, 5.33]; +-5.4 brackets it symmetrically).
+    \path (-5.4,0) (5.4,0);
+    % ---- materials (coloured like the MCNP top view) ----
+    \fill[yellow]          (-3.6,-3.6)   rectangle (3.6,3.6);    % water (cell)
+    \fill[green!75!black]  (-3.4,-3.4)   rectangle (3.4,3.4);    % Al box wall
+    \fill[yellow]          (-3.25,-3.25) rectangle (3.25,3.25);  % water cavity (a)
+    % 4x4 lattice grid lines
+    \foreach \i in {-1.625,0,1.625}{
+      \draw[thin] (\i,-3.25) -- (\i,3.25);
+      \draw[thin] (-3.25,\i) -- (3.25,\i);
+    }
+    % fuel rods: Al cladding (green) + UO2 meat (blue)
+    \foreach \x in {-2.4375,-0.8125,0.8125,2.4375}{
+      \foreach \y in {-2.4375,-0.8125,0.8125,2.4375}{
+        \fill[green!75!black] (\x,\y) circle (0.5);
+        \fill[blue]           (\x,\y) circle (0.35);
+        \draw[thin]           (\x,\y) circle (0.5);
+        \draw[thin]           (\x,\y) circle (0.35);
+      }
+    }
+    % ---- outlines ----
+    \draw[thick] (-3.6,-3.6)   rectangle (3.6,3.6);     % cell pitch (e)
+    \draw        (-3.4,-3.4)   rectangle (3.4,3.4);     % Al box outer wall
+    \draw        (-3.25,-3.25) rectangle (3.25,3.25);   % Al box cavity (a)
+
+    % ---- lattice coordinates (MCNP fill=-1:2 -1:2): columns i on top, rows j on left ----
+    \foreach \x/\lab in {-2.4375/-1,-0.8125/0,0.8125/1,2.4375/2}
+      \node at (\x,3.95) {\textit{\lab}};
+    \foreach \y/\lab in {2.4375/-1,0.8125/0,-0.8125/1,-2.4375/2}
+      \node at (-4.15,\y) {\textit{\lab}};
+
+    % ---- dimensions ----
+    % b = 1.625 (one lattice element) -- bottom, just under the square
+    \draw[ext] (-3.25,-3.35)  -- (-3.25,-4.1);
+    \draw[ext] (-1.625,-3.35) -- (-1.625,-4.1);
+    \draw[dim] (-3.25,-4.0)   -- (-1.625,-4.0);
+    \node[fill=white,inner sep=1.5pt] at (-2.4375,-4.0) {1.625};
+    % e = 7.2 (whole cell side) -- bottom, below the 1.625
+    \draw[ext] (-3.6,-3.7) -- (-3.6,-4.85);
+    \draw[ext] (3.6,-3.7)  -- (3.6,-4.85);
+    \draw[dim] (-3.6,-4.7) -- (3.6,-4.7);
+    \node[fill=white,inner sep=1.5pt] at (0,-4.7) {7.2};
+    % a = 6.5 (Al box cavity side) -- right, inner
+    \draw[ext] (3.35,3.25)  -- (4.5,3.25);
+    \draw[ext] (3.35,-3.25) -- (4.5,-3.25);
+    \draw[dim] (4.35,-3.25) -- (4.35,3.25);
+    \node[fill=white,inner sep=1.5pt,rotate=90] at (4.35,0) {6.5};
+    % 6.8 = Al casing outer side -- right, outside the 6.5
+    \draw[ext] (3.5,3.4)   -- (5.3,3.4);
+    \draw[ext] (3.5,-3.4)  -- (5.3,-3.4);
+    \draw[dim] (5.15,-3.4) -- (5.15,3.4);
+    \node[fill=white,inner sep=1.5pt,rotate=90] at (5.15,0) {6.8};
+  \end{tikzpicture}
+  \caption{Top view of a fuel cell. A rod is adressed with the lattice coordinates, columns $i$ and rows $j$. The dimensions are in cm.}
+  \label{fig:fuelcell}
+\end{figure}

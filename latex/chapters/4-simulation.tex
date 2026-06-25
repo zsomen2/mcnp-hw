@@ -1,0 +1,191 @@
+% =====================================================================
+%  Chapter 4 -- Simulation
+% =====================================================================
+\section{Simulation}
+
+The model is run as an MCNP \texttt{KCODE} criticality ($k_{\mathrm{eff}}$) calculation in neutron transport mode (\texttt{mode n}).
+The neutron flux leaking through the outer concrete mantle is tallied, folded with the ICRP-116 fluence-to-effective-dose coefficients \cite{icrp} and scaled to the nominal $100~\mathrm{kW}$ power to finally obtain an absolute dose rate.
+
+\subsection{Setup}
+
+The criticality source is controlled by the \texttt{KCODE} card and seeded by a single \texttt{KSRC} point. The four \texttt{KCODE} parameters are listed in table~\ref{tab:kcode}.
+
+\begin{lstlisting}[numbers=none]
+kcode 2000 1.0 20 220
+ksrc  -1.1625 0.8125 0
+\end{lstlisting}
+
+\begin{table}[H]
+  \centering
+  \caption{Parameters of the \texttt{KCODE} criticality card.}
+  \label{tab:kcode}
+  \begin{tabular}{llc}
+    \toprule
+    Parameter & Description & Value \\
+    \midrule
+    \texttt{NSRCK} & Source histories per cycle          & $2000$ \\
+    \texttt{RKK}   & Initial guess for $k_{\mathrm{eff}}$ & $1.0$  \\
+    \texttt{IKZ}   & Inactive (skipped) cycles           & $20$   \\
+    \texttt{KCT}   & Total number of cycles              & $220$  \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The number of neutron histories that contribute to the tallies is the number of source neutrons per cycle multiplied by the number of active cycles, which is the total number of cycles minus the inactive ones.
+
+\begin{equation}
+N = \mathrm{NSRCK}\times(\mathrm{KCT}-\mathrm{IKZ}) = 2000\times(220-20) = 4.0\times10^{5}.
+\end{equation}
+
+The first $\mathrm{IKZ}=20$ cycles are inactive and discarded while the fission source converges, so of the $4.4\times10^{5}$ histories run in total, only these $4.0\times10^{5}$ active histories contribute to the tallies.
+
+The \texttt{KSRC} seed is placed at the centre of a single fuel rod, the one at lattice position $2$:$0$ (column $i=2$, row $j=0$) inside the fuel cell at core position $D5$.
+From this single point the fission source spreads over all fuel cells during the inactive cycles.
+
+The dose rate is scored on the outer surface of the concrete container, the $r=120~\mathrm{cm}$ cylinder, with a neutron surface-flux tally (\texttt{F2}).
+The fluence is split into three energy groups by an \texttt{E2} card with edges at $0.5\times10^{-6}$, $0.5$ and $20~\mathrm{MeV}$, implementing the conventional thermal, epithermal and fast classification:
+
+\begin{equation}
+  \begin{aligned}
+    \text{thermal:}    &\quad E \le 0.5~\mathrm{eV},\\
+    \text{epithermal:} &\quad 0.5~\mathrm{eV} < E \le 0.5~\mathrm{MeV},\\
+    \text{fast:}       &\quad 0.5~\mathrm{MeV} < E \le 20~\mathrm{MeV}.
+  \end{aligned}
+\end{equation}
+
+The $0.5~\mathrm{eV}$ edge is the cadmium cut-off, the upper limit of the near-Maxwellian thermal group whose flux peaks near $kT\approx0.025~\mathrm{eV}$, below which cadmium absorbs strongly and above which it is essentially transparent.
+The $0.5~\mathrm{MeV}$ edge is the conventional lower limit of the fast fission-spectrum group, and $20~\mathrm{MeV}$ is the upper energy limit of the continuous-energy cross-section libraries.
+
+\newpage
+
+\subsection{Conversion}\label{sec:conversion}
+
+The \texttt{F2} tally scores the flux per source (fission) neutron, so turning it into an absolute dose rate at the nominal power requires the neutron source strength of the core, the ICRP fluence-to-dose coefficients \cite{icrp} and a conversion of the units.
+These are supplied by the \texttt{FM2} and \texttt{DE2}/\texttt{DF2} cards and are derived below.
+
+The source strength $S$ is the fission rate $\dot{n}_{\mathrm{fis}}=P/E_f$ times the mean number of neutrons released per fission $\bar{\nu}$:
+
+\begin{equation}
+  \dot{n}_{\mathrm{fis}} = \frac{P}{E_f}, \qquad
+  S = \bar{\nu}\,\dot{n}_{\mathrm{fis}} = \frac{\bar{\nu}\,P}{E_f}.
+\end{equation}
+
+With the thermal power $P=100~\mathrm{kW}=1.0\times10^{5}~\mathrm{J/s}$, the standard mean yield of $^{235}\mathrm{U}$ thermal fission $\bar{\nu}=2.43$, and an effective energy release of $E_f=186~\mathrm{MeV}$ per fission, the fission rate and source strength take the following values.
+
+\begin{equation}
+\begin{aligned}
+  \dot{n}_{\mathrm{fis}}
+    &= \frac{1.0\times10^{5}~\mathrm{J/s}}
+            {186~\mathrm{MeV}\times1.602\times10^{-13}~\mathrm{J/MeV}}
+     = 3.36\times10^{15}~\mathrm{fissions/s}, \\[2pt]
+  S &= 2.43\times3.36\times10^{15}~\mathrm{fissions/s}
+     = 8.15\times10^{15}~\mathrm{n/s}.
+\end{aligned}
+\end{equation}
+
+Folding the flux with the ICRP-116 coefficients collected in table~\ref{tab:icrp} gives a dose in pSv per source neutron, and multiplying by $S$ yields $\mathrm{pSv/s}$, whereas the result is wanted in $\mu\mathrm{Sv/h}$, therefore the following unit conversion is applied to the factor.
+
+\begin{equation}
+  \frac{\mathrm{pSv}}{\mathrm{s}} \longrightarrow \frac{\mu\mathrm{Sv}}{\mathrm{h}}:
+  \qquad
+  3.6\times10^{3}~\tfrac{\mathrm{s}}{\mathrm{h}}
+  \times
+  10^{-6}~\tfrac{\mu\mathrm{Sv}}{\mathrm{pSv}}
+  = 3.6\times10^{-3}.
+\end{equation}
+
+The source strength and this factor are combined into the single tally multiplier.
+
+\begin{equation}
+  \mathrm{FM2} = S\times 3.6\times10^{-3}
+    = 8.15\times10^{15}\times 3.6\times10^{-3}
+    = 2.934\times10^{13}.
+\end{equation}
+
+The energy-dependent response is the ICRP-116~\cite{icrp} neutron fluence-to-effective-dose conversion for the antero-posterior (AP) irradiation geometry, in which the radiation reaches the body from front to back.
+It is entered through the \texttt{DE2}/\texttt{DF2} cards as the 48 energy and coefficient pairs listed in table~\ref{tab:icrp} and plotted in figure~\ref{fig:icrp}.
+
+\newpage
+
+\begin{table}[H]
+  \centering
+  \caption{Neutron fluence-to-effective-dose conversion coefficients (ICRP-116, AP geometry).}
+  \label{tab:icrp}
+  \begin{tabularx}{0.95\textwidth}{YY@{\hskip 1em}|@{\hskip 1em}YY@{\hskip 1em}|@{\hskip 1em}YY}
+    \toprule
+    $E$~[MeV] & $h$~[pSv\,cm$^2$] & $E$~[MeV] & $h$~[pSv\,cm$^2$] &
+    $E$~[MeV] & $h$~[pSv\,cm$^2$] \\
+    \midrule
+    $1.0\times10^{-9}$ & $3.09$ & $2.0\times10^{-3}$ & $7.61$ & $1.5$ & $365$ \\
+    $1.0\times10^{-8}$ & $3.55$ & $5.0\times10^{-3}$ & $7.97$ & $2.0$ & $407$ \\
+    $2.5\times10^{-8}$ & $4.00$ & $1.0\times10^{-2}$ & $9.11$ & $3.0$ & $458$ \\
+    $1.0\times10^{-7}$ & $5.20$ & $2.0\times10^{-2}$ & $12.2$ & $4.0$ & $483$ \\
+    $2.0\times10^{-7}$ & $5.87$ & $3.0\times10^{-2}$ & $15.7$ & $5.0$ & $494$ \\
+    $5.0\times10^{-7}$ & $6.59$ & $5.0\times10^{-2}$ & $23.0$ & $6.0$ & $498$ \\
+    $1.0\times10^{-6}$ & $7.03$ & $7.0\times10^{-2}$ & $30.6$ & $7.0$ & $499$ \\
+    $2.0\times10^{-6}$ & $7.39$ & $1.0\times10^{-1}$ & $41.9$ & $8.0$ & $499$ \\
+    $5.0\times10^{-6}$ & $7.71$ & $1.5\times10^{-1}$ & $60.6$ & $9.0$ & $500$ \\
+    $1.0\times10^{-5}$ & $7.82$ & $2.0\times10^{-1}$ & $78.8$ & $10$  & $500$ \\
+    $2.0\times10^{-5}$ & $7.84$ & $3.0\times10^{-1}$ & $114$  & $12$  & $499$ \\
+    $5.0\times10^{-5}$ & $7.82$ & $5.0\times10^{-1}$ & $177$  & $14$  & $495$ \\
+    $1.0\times10^{-4}$ & $7.79$ & $7.0\times10^{-1}$ & $232$  & $15$  & $493$ \\
+    $2.0\times10^{-4}$ & $7.73$ & $9.0\times10^{-1}$ & $279$  & $16$  & $490$ \\
+    $5.0\times10^{-4}$ & $7.54$ & $1.0$              & $301$  & $18$  & $484$ \\
+    $1.0\times10^{-3}$ & $7.54$ & $1.2$              & $330$  & $20$  & $477$ \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\input{figures/flux_dose}
+
+\newpage
+
+\subsection{Results}
+
+The dose rates obtained over the active cycles are collected in table~\ref{tab:doserate}, split into the thermal, epithermal and fast groups.
+
+\begin{table}[H]
+  \centering
+  \caption{Neutron dose rate on the outer concrete surface ($r=120$~cm) at
+    $100$~kW reactor power, by energy group.}
+  \label{tab:doserate}
+  \begin{tabular}{lccc}
+    \toprule
+    Energy group & Energy range & Dose rate $[\mu\mathrm{Sv/h}]$ & Rel.\ error \\
+    \midrule
+    Thermal     & $\leq 0.5$~eV          & $1.114\times10^{4}$ & $0.071$ \\
+    Epithermal  & $0.5$~eV\,--\,$0.5$~MeV & $2.244\times10^{4}$ & $0.126$ \\
+    Fast        & $0.5$\,--\,$20$~MeV     & $4.226\times10^{5}$ & $0.126$ \\
+    \midrule
+    Total       & ---                     & $4.562\times10^{5}$ & $0.121$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The total neutron dose rate on the outer mantle is about $4.56\times10^{5}~\mu\mathrm{Sv/h}$ (roughly $456~\mathrm{mSv/h}$), and it is dominated by the fast group, which carries about $93\%$ of the total.
+The criticality calculation itself converged to a multiplication factor of $k_{\mathrm{eff}}=1.04682\pm0.00119$.
+
+The relevant parts of the output file are the converged $k_{\mathrm{eff}}$, the energy-binned tally and the statistical-check summary:
+
+\begin{lstlisting}[numbers=none]
+the final estimated combined keff = 1.04682
+with an estimated standard deviation of 0.00119
+
+tally 2   particle flux averaged over a surface (neutron)   nps = 440335
+    energy           dose [uSv/h]   rel err
+  5.0000E-07         1.11366E+04    0.0706
+  5.0000E-01         2.24432E+04    0.1260
+  2.0000E+01         4.22609E+05    0.1258
+    total            4.56189E+05    0.1205
+
+warning. the tally in the tally fluctuation chart bin did not
+pass 3 of the 10 statistical checks.
+\end{lstlisting}
+
+The tally converged only to a relative error of about $12\%$ and failed $3$ of the $10$ MCNP statistical checks, so the value is indicative rather than fully converged.
+A longer run with more active cycles, or a stronger variance reduction, would be needed for a reliable estimate.
+As an example, the \texttt{KCODE} card below raises the source histories per cycle to $20000$ and the active cycles to $500$, giving $10^{7}$ active histories.
+
+\begin{lstlisting}[numbers=none]
+kcode 20000 1.0 20 520
+\end{lstlisting}

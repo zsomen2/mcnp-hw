@@ -1,0 +1,33 @@
+% !TeX program = lualatex
+% !BIB program = biber
+% =====================================================================
+%  Homework Documentation Main
+% =====================================================================
+\documentclass[11pt,a4paper]{article}
+
+\input{include/packages}
+
+\begin{document}
+
+% Titlepage
+\input{include/titlepage}
+
+% TOC
+\tableofcontents
+\clearpage
+
+% Body
+\input{chapters/1-task}
+\input{chapters/2-geometry}
+\input{chapters/3-materials}
+\input{chapters/4-simulation}
+
+% References
+\clearpage
+\printbibliography[title={References}]
+
+% Appendix
+\clearpage
+\input{chapters/appendix}
+
+\end{document}

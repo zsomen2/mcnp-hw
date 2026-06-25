@@ -1,0 +1,65 @@
+% =====================================================================
+%  Chapter 2 -- Geometry
+% =====================================================================
+\section{Geometry}
+
+The geometry of the model was built using MCNP~\cite{primer} and inspected with the Visual Editor~\cite{vised}.
+An overview of the reactor core is shown in figure~\ref{fig:vised}, where the core is an $8\times9$ lattice of cells, addressed by the column letters $A$ to $H$ and the row numbers $1$ to $9$.
+The per cell aluminium casings are not drawn so that the cell contents stay visible, but these are shown later in the cell geometry descriptions.
+Each grid position holds a fuel cell, a graphite control cell or a water filled empty cell.
+
+\input{figures/core}
+
+\newpage
+
+\subsection{Fuel Rod}
+
+The fuel rod is modelled as two coaxial cylinders, a UO$_2$ fuel meat enclosed in an aluminium cladding.
+Its principal dimensions are given in the blueprint of figure~\ref{fig:fuelrod}.
+
+\input{figures/fuel_rod}
+
+\subsection{Cells}
+
+The fuel rods are fitted into a $4\times4$ lattice inside an aluminium casing, which together form a fuel cell.
+Its top view dimensions are shown in figure~\ref{fig:fuelcell}.
+
+\input{figures/fuel_cell}
+
+The height of each cell, and therefore the whole reactor core is $60~\mathrm{cm}$.
+
+\newpage
+
+Besides the fully loaded cell, three partially loaded fuel cell variants occur in the core, a half-filled, a middle-empty and a corner-empty arrangement, shown in figure~\ref{fig:fuelcelltypes}.
+In each variant the omitted lattice positions are left as water.
+
+\input{figures/fuel_cell_types}
+
+The control cells use the same outer aluminium casing but are filled with graphite instead of fuel rods.
+Some are fully filled, while the holed control cells contain a central, aluminium-lined water channel.
+Both types are shown in figure~\ref{fig:controlcell}.
+
+\input{figures/control_cell}
+
+In the MCNP input file each cell type is a separate universe, empty cells in the reactor core are filled with water.
+
+\newpage
+
+\subsection{Container \& Importance Layers}
+
+The whole core is submerged in water, which has a diameter of 140 cm, and a cylindrical concrete container surrounds that, the width of the container wall is 50 cm and the height is 200 cm.
+Both cylinders are divided into 10 cm wide concentric importance layers, with the neutron importance doubled from one shell to the next.
+Their top view layout is shown in figure~\ref{fig:implayers}.
+
+\input{figures/importance_layers}
+
+The diameter of the innermost layer is set so that it fully encloses the reactor core.
+The effective diameter of the core is the diagonal of the $8\times9$ lattice with a cell pitch of $p=7.2~\mathrm{cm}$, given by the following equation.
+
+\begin{equation}
+D_\mathrm{core} = \sqrt{(8p)^2 + (9p)^2} = p\sqrt{8^2 + 9^2} = 7.2\sqrt{145}~\mathrm{cm} \approx 86.7~\mathrm{cm}.
+\end{equation}
+
+The innermost layer is given a diameter of $100~\mathrm{cm}$, the smallest round value that still contains the whole core.
+
+\newpage
