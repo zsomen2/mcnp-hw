@@ -154,7 +154,7 @@ The height of both cylinders is the same _H_.
 Each cylinder is divided into 10 cm wide importance layers.
 The effective diameter of the reactor core with the _8x9_ lattice can be calculated as the following:
 
-$$D_\text{core} = \sqrt{(8a)^2 + (9a)^2} = a\sqrt{8^2 + 9^2} = 7.2 \cdot \sqrt{145} \approx 86.7 \ \text{cm}$$
+$$D_\text{core} = \sqrt{(8e)^2 + (9e)^2} = e\sqrt{8^2 + 9^2} = 7.2 \cdot \sqrt{145} \approx 86.7 \ \text{cm}$$
 
 Since the effective diameter is 86.7 cm, the inner most importance layer is defined with a diameter of 100 cm.
 
@@ -203,9 +203,9 @@ The model is run as a criticality (_k_-eff) calculation, like the example decks.
 |---|---|---|
 | `MODE` | `n` | Neutron transport only. |
 | `KCODE` | `2000 1.0 20 220` | 2000 histories per cycle, initial _k_-guess of 1.0, 20 inactive (skipped) cycles and 220 total cycles (200 active). |
-| `KSRC` | `-1.16 0.81 0` | Initial source point at the centre of the **SRC** rod in cell _D5_. |
+| `KSRC` | `-1.1625 0.8125 0` | Initial source point at the centre of the **SRC** rod in cell _D5_. |
 
-The seed coordinate follows from the core-centred origin: cell _D5_ is centred at _(x, y) = (-3.6, 0)_ (cell pitch _e_), and the **SRC** rod (row 2, column 4 of the _4x4_, pitch _b_) is offset by _(+2.4375, +0.8125)_, giving _(-1.16, 0.81, 0)_ at _z = 0_.
+The seed coordinate follows from the core-centred origin: cell _D5_ is centred at _(x, y) = (-3.6, 0)_ (cell pitch _e_), and the **SRC** rod (row 2, column 4 of the _4x4_, pitch _b_) is offset by _(+2.4375, +0.8125)_, giving _(-1.1625, 0.8125, 0)_ at _z = 0_.
 
 ## Tally
 
@@ -214,11 +214,8 @@ The dose rate is determined on the **outer surface of the concrete container**, 
 | Card | Definition | Description |
 |---|---|---|
 | `F2` | `n` (outer concrete surface) | Average neutron flux across the outer wall (the _D_ = 240 cm cylinder). |
-| `FM2` | `8.15e15` | Scales the per-source-neutron flux to the absolute neutron rate at the nominal power (100 kW → ≈ 8·10¹⁵ n/s), as in the example decks. |
-| `DE2` / `DF2` | energy / dose-factor pairs | Neutron fluence-to-dose-rate conversion (ICRP-21 or ANSI/ANS-6.1.1-1977); turns the flux into a dose rate. |
+| `FM2` | `2.934e13` | Scales the per-source-neutron tally to an absolute dose rate at the nominal power. Combines the source strength (100 kW → _S_ ≈ 8.15·10¹⁵ n/s) with the 3.6·10⁻³ factor that converts pSv/s to µSv/h. |
+| `DE2` / `DF2` | energy / dose-factor pairs | Neutron fluence-to-effective-dose conversion (ICRP-116, Table A.5, AP geometry); turns the flux into an effective dose. |
 | `E2` | `0.5e-6 0.5 20` | _(optional)_ thermal / epithermal / fast energy bins. |
 
-So `F2` gives the flux leaking through the outer wall, `FM2` puts it on an absolute per-second basis at full power, and `DE2`/`DF2` applies the energy-dependent flux-to-dose conversion — the final tally is the **dose rate outside the container**.
-
-> The `DE2`/`DF2` pairs are the tabulated values of the chosen standard; MCNP can also apply them automatically via the built-in dose functions on the `DF` card. This is a **neutron** dose, matching the `mode n` model — capturing the secondary-gamma dose as well would need `mode n p` and a photon tally with its own `DF`.
-
+So `F2` gives the flux leaking through the outer wall, `DE2`/`DF2` folds it into an effective dose per source neutron, and `FM2` scales that to the absolute dose rate at full power — the final tally is the **dose rate outside the container** in µSv/h.
